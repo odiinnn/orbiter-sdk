@@ -1,6 +1,6 @@
 {
-  "name": "orbiter-sdk",
-  "version": "0.1.0",
+  "name": "odiinnn-orbiter-sdk",
+  "version": "0.1.2",
   "description": "",
   "keywords": [],
   "main": "dist/orbiter-sdk.umd.js",
@@ -10,10 +10,10 @@
   "files": [
     "dist"
   ],
-  "author": "linkdrone <fengwanqing2014@gmail.com>",
+  "author": "odiinnn",
   "repository": {
     "type": "git",
-    "url": "https://github.com/linkdrone/orbiter-sdk.git"
+    "url": "https://github.com/odiinnn/orbiter-sdk"
   },
   "license": "MIT",
   "engines": {

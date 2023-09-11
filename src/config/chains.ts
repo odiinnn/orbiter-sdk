@@ -273,5 +273,43 @@ export default [
     faucets: [],
     explorers: [],
     infoURL: "https://arbitrum.io",
-  }
+  },
+  {
+    chainId: 8453,
+    networkId: 8453,
+    internalId: 21,
+    name: "Base",
+    nativeCurrency: {
+      "name": "Ether",
+      "symbol": "ETH",
+      "decimals": 18
+    },
+    rpc: [
+      "https://developer-access-mainnet.base.org",
+      "https://base.blockpi.network/v1/rpc/public",
+    ],
+    faucets: [],
+    explorers: [],
+    infoURL: "",
+  },
+  {
+    chainId: 59144,
+    networkId: 59144,
+    internalId: 23,
+    name: "Linea",
+    rpc: ["https://rpc.linea.build"],
+    faucets: [],
+    explorers: [],
+    infoURL: "",
+  },
+  {
+    chainId: 7777777,
+    networkId: 7777777,
+    internalId: 30,
+    name: "Zora",
+    rpc: ["https://rpc.zora.energy"],
+    faucets: [],
+    explorers: [],
+    infoURL: "",
+  },
 ]

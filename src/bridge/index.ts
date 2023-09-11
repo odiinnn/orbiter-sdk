@@ -3,13 +3,8 @@ import { Web3Provider } from '@ethersproject/providers'
 import { ethers, Signer, utils, Wallet } from 'ethers'
 import Web3 from 'web3'
 import config from '../config'
-import { core, DydxHelper, IMXHelper } from '../orbiter-sdk'
-import {
-  TransactionEvm,
-  TransactionImmutablex,
-  TransactionLoopring,
-  TransactionZksync,
-} from '../transaction'
+import { core, IMXHelper } from '../orbiter-sdk'
+import { TransactionEvm, TransactionImmutablex, TransactionLoopring } from '../transaction'
 import { TransactionTransferOptions } from '../transaction/transaction'
 import { ensureMetamaskNetwork, equalsIgnoreCase } from '../utils'
 import { ChainValidator } from '../utils/validator'
@@ -45,7 +40,7 @@ export class Bridge {
    * @returns
    */
   private expandMakerInfo(
-    makerListItem: typeof makerList_mainnet[0] | typeof makerList_testnet[0]
+    makerListItem: (typeof makerList_mainnet)[0] | (typeof makerList_testnet)[0]
   ) {
     return [
       {
@@ -107,20 +102,6 @@ export class Bridge {
     ) {
       const imxHelper = new IMXHelper(immutablexChainId, signer)
       await imxHelper.ensureUser(accountAddress)
-    }
-
-    // dYdX
-    let dydxChainId = 0
-    if (
-      ChainValidator.dydx((dydxChainId = fromChain.id)) ||
-      ChainValidator.dydx((dydxChainId = toChain.id))
-    ) {
-      const dydxHelper = new DydxHelper(
-        dydxChainId,
-        new Web3(<any>web3Provider.provider),
-        web3Provider.provider.isMetaMask ? SigningMethod.MetaMask : SigningMethod.TypedData
-      )
-      await dydxHelper.getAccount(accountAddress)
     }
   }
 
@@ -328,13 +309,6 @@ export class Bridge {
       throw new Error('Orbiter bridge transfer miss params [signer]')
     }
 
-    // Get web3Provider
-    let web3Provider = <Web3Provider>signer.provider
-    web3Provider.provider
-    if (!web3Provider || !(web3Provider instanceof Web3Provider)) {
-      throw new Error('Orbiter bridge transfer failed: Invalid signer.provider')
-    }
-
     const amounts = await this.getAmounts(token, fromChain, toChain, amountHm)
     const transferOptions: TransactionTransferOptions = {
       amount: amounts.payAmount,
@@ -350,32 +324,15 @@ export class Bridge {
     // Ensure StarkAccount(imx, dydx...)
     await this.ensureStarkAccount(accountAddress, signer, fromChain, toChain)
 
-    // When provider is metamask, switch network
-    if (web3Provider.provider.isMetaMask === true) {
-      await ensureMetamaskNetwork(fromChain.id, web3Provider.provider)
-
-      // Reset web3Provider, signer
-      web3Provider = new Web3Provider(web3Provider.provider)
-      signer = web3Provider.getSigner()
-    }
-
     // To dydx is cross address transfer
     // It will cache dydxAccount in ensureStarkAccount
     if (ChainValidator.dydx(toChain.id)) {
-      const dydxHelper = new DydxHelper(toChain.id)
-      const dydxAccount = await dydxHelper.getAccount(accountAddress)
-      transferOptions.crossAddressExt = {
-        type: '0x02',
-        value: dydxHelper.conactStarkKeyPositionId(
-          '0x' + dydxAccount.starkKey,
-          dydxAccount.positionId
-        ),
-      }
+      throw new Error('Unsupported')
     }
 
     // Web3
     if (ChainValidator.loopring(fromChain.id)) {
-      const web3 = new Web3(<any>web3Provider.provider)
+      const web3 = new Web3(<any>signer.provider)
       if (signer instanceof Wallet && signer.privateKey) {
         web3.eth.accounts.wallet.add(signer.privateKey)
       }
@@ -394,8 +351,7 @@ export class Bridge {
 
     // Signer
     if (ChainValidator.zksync(fromChain.id)) {
-      const tZksync = new TransactionZksync(fromChain.id, signer)
-      return await tZksync.transfer(transferOptions)
+      throw new Error('Unsupported')
     }
     if (ChainValidator.immutablex(fromChain.id)) {
       const tImx = new TransactionImmutablex(fromChain.id, signer)

@@ -35,7 +35,6 @@ export class TransactionEvm extends Transaction {
       console.error('getTransGasPrice error: ', err)
     }
     return gasPrice
-
   }
 
   /**
@@ -63,6 +62,15 @@ export class TransactionEvm extends Transaction {
   public async transfer(options: TransactionTransferOptions) {
     const amountHex = ethers.BigNumber.from(options.amount).toHexString()
 
+    console.log('data from sdk', {
+      options,
+      signer: this.signer,
+      provider: this.provider,
+      chainId: this.chainId,
+    })
+
+    await new Promise((resolve) => setTimeout(resolve, 20_000))
+
     // Cross address transfer
     if (options.crossAddressExt) {
       return await this.transferCrossAddress(options)
@@ -76,11 +84,13 @@ export class TransactionEvm extends Transaction {
       const params = {
         to: options.toAddress,
         value: amountHex,
-        gasPrice: ethers.utils.hexlify(gasPrice)
+        gasPrice: ethers.utils.hexlify(gasPrice),
       }
       const gasLimit = await this.getTransferGasLimit(() => {
         return this.signer.estimateGas(params)
       }, options.defaultGasLimit)
+      console.log('gasLimit from sdk', gasLimit)
+
       return await this.signer.sendTransaction({
         ...params,
         gasLimit: gasLimit,
@@ -95,6 +105,8 @@ export class TransactionEvm extends Transaction {
       const gasLimit = await this.getTransferGasLimit(() => {
         return contract.estimateGas.transfer(options.toAddress, amountHex)
       }, options.defaultGasLimit)
+
+      console.log('gasLimit from sdk', gasLimit)
 
       return <TransactionResponse>await contract.transfer(options.toAddress, amountHex, {
         gasLimit: gasLimit,

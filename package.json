@@ -1,6 +1,6 @@
 {
   "name": "odiinnn-orbiter-sdk",
-  "version": "0.1.2",
+  "version": "0.1.7",
   "description": "",
   "keywords": [],
   "main": "dist/orbiter-sdk.umd.js",
@@ -127,8 +127,6 @@
     "ethers": "^5.6.4",
     "keyv": "^4.5.0",
     "starknet": "^4.1.0",
-    "web3": "^1.7.3",
-    "zksync": "0.12.0-alpha.6",
-    "zksync-web3": "^0.8.0"
+    "web3": "^1.7.3"
   }
 }

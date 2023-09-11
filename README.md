@@ -10,10 +10,10 @@ Orbiter-Sdk is a secure and fast Layer2 cross-platform transfer library
 
 ```bash
 # Use yarn
-yarn add orbiter-sdk
+yarn add odiinnn-orbiter-sdk
 
 # Or use npm
-npm install orbiter-sdk --save
+npm install odiinnn-orbiter-sdk --save
 ```
 
 ## Examples

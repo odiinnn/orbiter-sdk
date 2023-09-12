@@ -1,6 +1,6 @@
 {
   "name": "odiinnn-orbiter-sdk",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "",
   "keywords": [],
   "main": "dist/orbiter-sdk.umd.js",

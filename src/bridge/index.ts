@@ -1,12 +1,9 @@
-import { SigningMethod } from '@dydxprotocol/v3-client'
-import { Web3Provider } from '@ethersproject/providers'
-import { ethers, Signer, utils, Wallet } from 'ethers'
-import Web3 from 'web3'
+import { ethers, Signer, utils } from 'ethers'
 import config from '../config'
-import { core, IMXHelper } from '../orbiter-sdk'
-import { TransactionEvm, TransactionImmutablex, TransactionLoopring } from '../transaction'
+import { core } from '../orbiter-sdk'
+import { TransactionEvm } from '../transaction'
 import { TransactionTransferOptions } from '../transaction/transaction'
-import { ensureMetamaskNetwork, equalsIgnoreCase } from '../utils'
+import { equalsIgnoreCase } from '../utils'
 import { ChainValidator } from '../utils/validator'
 import { makerList as makerList_mainnet } from './maker_list.mainnet'
 import { makerList as makerList_testnet } from './maker_list.testnet'
@@ -78,31 +75,6 @@ export class Bridge {
         avalibleTimes: makerListItem.c2AvalibleTimes,
       },
     ]
-  }
-
-  /**
-   * @param accountAddress
-   * @param signer
-   * @param fromChain
-   * @param toChain
-   */
-  private async ensureStarkAccount(
-    accountAddress: string,
-    signer: Signer,
-    fromChain: BridgeChain,
-    toChain: BridgeChain
-  ) {
-    const web3Provider = <Web3Provider>signer.provider
-
-    // immutablex
-    let immutablexChainId = 0
-    if (
-      ChainValidator.immutablex((immutablexChainId = fromChain.id)) ||
-      ChainValidator.immutablex((immutablexChainId = toChain.id))
-    ) {
-      const imxHelper = new IMXHelper(immutablexChainId, signer)
-      await imxHelper.ensureUser(accountAddress)
-    }
   }
 
   /**
@@ -321,9 +293,6 @@ export class Bridge {
       throw new Error('Orbiter bridge failed: Empty fromAddress')
     }
 
-    // Ensure StarkAccount(imx, dydx...)
-    await this.ensureStarkAccount(accountAddress, signer, fromChain, toChain)
-
     // To dydx is cross address transfer
     // It will cache dydxAccount in ensureStarkAccount
     if (ChainValidator.dydx(toChain.id)) {
@@ -332,17 +301,7 @@ export class Bridge {
 
     // Web3
     if (ChainValidator.loopring(fromChain.id)) {
-      const web3 = new Web3(<any>signer.provider)
-      if (signer instanceof Wallet && signer.privateKey) {
-        web3.eth.accounts.wallet.add(signer.privateKey)
-      }
-
-      const tLoopring = new TransactionLoopring(fromChain.id, web3)
-      return await tLoopring.transfer({
-        ...transferOptions,
-        fromAddress: accountAddress,
-        memo: amounts.payText,
-      })
+      throw new Error('Unsupported')
     }
     if (ChainValidator.dydx(fromChain.id)) {
       // dYdx cannot transfer out now
@@ -354,12 +313,7 @@ export class Bridge {
       throw new Error('Unsupported')
     }
     if (ChainValidator.immutablex(fromChain.id)) {
-      const tImx = new TransactionImmutablex(fromChain.id, signer)
-      return await tImx.transfer({
-        ...transferOptions,
-        decimals: token.precision,
-        symbol: token.name,
-      })
+      throw new Error('Unsupported')
     }
 
     // Evm transaction

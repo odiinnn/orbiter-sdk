@@ -1,4 +1,3 @@
-import dayjs from 'dayjs'
 import { utils } from 'ethers'
 import config from '../config'
 
@@ -12,17 +11,6 @@ export async function sleep(ms: number) {
       resolve(null)
     }, ms)
   })
-}
-
-/**
- * Normal format date: (YYYY-MM-DD HH:mm:ss)
- * @param date Date
- * @returns
- */
-export function dateFormatNormal(
-  date: string | number | Date | dayjs.Dayjs | null | undefined
-): string {
-  return dayjs(date).format('YYYY-MM-DD HH:mm:ss')
 }
 
 /**
@@ -52,7 +40,7 @@ export function equalsIgnoreCase(value1: string, value2: string): boolean {
  * @returns
  */
 export function isEthTokenAddress(tokenAddress: string) {
-  if(tokenAddress === "0x0000000000000000000000000000000000001010"){
+  if (tokenAddress === '0x0000000000000000000000000000000000001010') {
     // polygon matic token
     return true
   }

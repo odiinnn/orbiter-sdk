@@ -1,5 +1,5 @@
 import { TransactionResponse } from '@ethersproject/abstract-provider'
-import { BigNumber, BigNumberish, ethers } from 'ethers'
+import { BigNumberish, ethers } from 'ethers'
 import config from '../config'
 import { isEthTokenAddress } from '../utils'
 import { CrossAddress } from '../utils/cross_address'
